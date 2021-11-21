@@ -1,0 +1,75 @@
+CREATE SEQUENCE ID_TEST START WITH 1;
+CREATE TABLE TEST
+(
+ID NUMBER DEFAULT ID_TEST.NEXTVAL NOT NULL,
+TEXT VARCHAR2(60)
+);
+INSERT INTO TEST (TEXT) VALUES ('text_01');
+INSERT INTO TEST (TEXT) VALUES ('text_02');
+
+CREATE SEQUENCE ID_SINGER START WITH 1;
+
+CREATE TABLE SINGER
+(
+ID NUMBER DEFAULT ID_SINGER.NEXTVAL NOT NULL,
+FIRST_NAME VARCHAR2(60) NOT NULL,
+LAST_NAME VARCHAR2(40) NOT NULL,
+BIRTH_DATE DATE,
+VERSION NUMBER DEFAULT 0 NOT NULL,
+CONSTRAINT CON_SINGER_01 PRIMARY KEY(ID),
+CONSTRAINT CON_SINGER_02 UNIQUE (FIRST_NAME,LAST_NAME)
+);
+
+CREATE SEQUENCE ID_ALBUM START WITH 1;
+
+CREATE TABLE ALBUM
+(
+ID NUMBER DEFAULT ID_ALBUM.NEXTVAL NOT NULL,
+SINGER_ID NUMBER NOT NULL,
+TITLE VARCHAR2(100) NOT NULL,
+RELEASE_DATE DATE,
+VERSION NUMBER DEFAULT 0 NOT NULL,
+CONSTRAINT CON_ALBUM_01 UNIQUE (SINGER_ID,TITLE),
+CONSTRAINT CON_ALBUM_02 PRIMARY KEY(ID),
+CONSTRAINT CON_ALBUM_03 FOREIGN KEY (SINGER_ID) REFERENCES SINGER (ID)
+);
+
+CREATE TABLE INSTRUMENT
+(
+INSTRUMENT_ID VARCHAR2(20) NOT NULL,
+CONSTRAINT CON_INSTRUMENT_01 PRIMARY KEY(INSTRUMENT_ID)
+);
+
+CREATE TABLE SINGER_INSTRUMENT
+(
+SINGER_ID NUMBER NOT NULL,
+INSTRUMENT_ID VARCHAR2(20) NOT NULL,
+CONSTRAINT CON_SINGER_INSTRUMENT_01 PRIMARY KEY (SINGER_ID,INSTRUMENT_ID),
+CONSTRAINT CON_SINGER_INSTRUMENT_02 FOREIGN KEY (SINGER_ID) REFERENCES SINGER (ID),
+CONSTRAINT CON_SINGER_INSTRUMENT_03 FOREIGN KEY (INSTRUMENT_ID) REFERENCES INSTRUMENT (INSTRUMENT_ID)
+);
+
+insert into singer (first_name, last_name, birth_date) values ('John', 'Mayer', '16.OCT.1977');
+insert into singer (first_name, last_name, birth_date) values ('Eric', 'Clapton', '30.MAR.1945');
+insert into singer (first_name, last_name, birth_date) values ('John', 'Butler', '01.APR.1975');
+
+insert into album (singer_id, title, release_date) values (1, 'The Search For Everything', '20.JAN.2017');
+insert into album (singer_id, title, release_date) values (1, 'Battle Studies', '17.NOV.2009');
+insert into album (singer_id, title, release_date) values (2, 'From The Cradle ', '13.SEP.1994');
+
+insert into instrument (instrument_id) values ( 'Guitar');
+insert into instrument (instrument_id) values ( 'Piano');
+insert into instrument (instrument_id) values ( 'Voice');
+insert into instrument (instrument_id) values ( 'Drums');
+insert into instrument (instrument_id) values ( 'Synthesizer');
+
+insert into singer_instrument(singer_id, instrument_id) values (1, 'Guitar');
+insert into singer_instrument(singer_id, instrument_id) values (1, 'Piano');
+insert into singer_instrument(singer_id, instrument_id) values (2, 'Guitar');
+
+DROP TABLE SINGER_INSTRUMENT;
+DROP TABLE INSTRUMENT;
+DROP TABLE ALBUM;
+DROP TABLE SINGER;
+DROP SEQUENCE ID_SINGER;
+DROP SEQUENCE ID_ALBUM;
